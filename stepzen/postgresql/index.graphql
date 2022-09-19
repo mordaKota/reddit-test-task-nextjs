@@ -85,6 +85,18 @@ type Query {
       configuration: "postgresql_config"
     )
 
+  getSubredditListLimit(limit: Int!): [Subreddit]
+  @dbquery(
+    type: "postgresql"
+    schema: "public"
+    query: """
+    select * from "subreddit"
+    order by "created_at" desc
+    limit $1
+    """
+    configuration: "postgresql_config"
+  )
+
   getPaginatedCommentList(first: Int!, after: Int!): [Comment]
     @dbquery(
       type: "postgresql"
@@ -198,6 +210,15 @@ type Mutation {
       dml: INSERT
       configuration: "postgresql_config"
     )
+
+  insertVote(post_id: ID!, username: String!, upvote: Boolean!):  Vote
+  @dbquery(
+    type: "postgresql"
+    schema: "public"
+    table: "vote"
+    dml: INSERT
+    configuration: "postgresql_config"
+  )
 
   insertComment(post_id: ID!, username: String!, text: String!):  Comment
     @dbquery(
